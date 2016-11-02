@@ -1,0 +1,543 @@
+#%RAML 1.0
+title: ZeroTier Central API
+version: 0.8.0
+baseUri: 'https://my.zerotier.com/api'
+mediaType: application/json
+protocols:
+  - HTTPS
+/network:
+  displayName: network
+  '/{id}':
+    displayName: '{id}'
+    uriParameters:
+      id:
+        description: Object identifier
+        type: string
+        displayName: Object identifier
+    post:
+      displayName: POST_network-id
+      description: Update network configuration. Update network configuration
+      body: {}
+      responses:
+        '200':
+          body:
+            application/json:
+              type: Network
+          description: Updated network record
+        '403':
+          body:
+            application/json:
+              type: Error
+          description: Authentication failure or network not viewable
+    /member:
+      displayName: member
+      '/{address}':
+        displayName: '{address}'
+        uriParameters:
+          address:
+            description: ZeroTier device address
+            type: string
+            displayName: ZeroTier device address
+        get:
+          displayName: GET_network-id-member-address
+          description: Get network member settings. Get network member settings
+          responses:
+            '200':
+              body:
+                application/json:
+                  type: NetworkMember
+              description: Network member settings
+            '403':
+              body:
+                application/json:
+                  type: Error
+              description: Authentication failure
+        post:
+          displayName: POST_network-id-member-address
+          description: Update member settings. Update member settings
+          body: {}
+          responses:
+            '200':
+              body:
+                application/json:
+                  type: NetworkMember
+              description: Updated network record
+            '403':
+              body:
+                application/json:
+                  type: Error
+              description: Authentication failure or network not viewable
+      get:
+        displayName: GET_network-id-member
+        description: Get a list of network members. Get a list of network members
+        responses:
+          '200':
+            body:
+              application/json:
+                type: array
+                items:
+                  type: NetworkMember
+            description: Array of incomplete / preview NetworkMember object
+          '403':
+            body:
+              application/json:
+                type: Error
+            description: Authentication failure
+    get:
+      displayName: GET_network-id
+      description: Get network configuration and status information. Get network configuration and status information
+      responses:
+        '200':
+          body:
+            application/json:
+              type: Network
+          description: Network config and status
+        '403':
+          body:
+            application/json:
+              type: Error
+          description: Authentication failure
+  get:
+    displayName: GET_network
+    description: Get a list of networks this user owns or can view/edit. Get a list of networks this user owns or can view/edit
+    responses:
+      '200':
+        body:
+          application/json:
+            type: array
+            items:
+              type: Network
+        description: Array of incomplete / preview Network objects
+      '403':
+        body:
+          application/json:
+            type: Error
+        description: Authentication failure
+/self:
+  displayName: self
+  get:
+    displayName: GET_self
+    description: Get currently authenticated user (if any). Get currently authenticated user (if any)
+    responses:
+      '200':
+        body:
+          application/json:
+            type: User
+        description: Current user
+      '403':
+        body:
+          application/json:
+            type: Error
+        description: Authentication failure
+/status:
+  displayName: status
+  get:
+    displayName: GET_status
+    description: |-
+      Get system version, status, and uptime. This returns the current status of the system. Unlike most of the API it is avilable without authentication, though some fields are omitted in
+      this case.
+    responses:
+      '200':
+        body:
+          application/json:
+            type: SystemStatus
+        description: System status information
+/user:
+  displayName: user
+  get:
+    displayName: GET_user
+    description: List viewable or editable users (including yourself). List viewable or editable users (including yourself)
+    responses:
+      '200':
+        body:
+          application/json:
+            type: array
+            items:
+              type: User
+        description: Array of incomplete / preview user records
+      '403':
+        body:
+          application/json:
+            type: Error
+        description: Authentication failure
+  '/{id}':
+    displayName: '{id}'
+    uriParameters:
+      id:
+        description: Object identifier
+        type: string
+        displayName: Object identifier
+    post:
+      displayName: POST_user-id
+      description: Update user information. Update user information
+      body:
+        application/json:
+          type: User
+      responses:
+        '200':
+          body:
+            application/json:
+              type: User
+          description: Updated user record
+        '403':
+          body:
+            application/json:
+              type: Error
+          description: Authentication failure or user not viewable
+    get:
+      displayName: GET_user-id
+      description: Get a user by UUID. Get a user by UUID
+      responses:
+        '200':
+          body:
+            application/json:
+              type: User
+          description: User record
+        '403':
+          body:
+            application/json:
+              type: Error
+          description: Authentication failure or user not viewable
+types:
+  User:
+    properties:
+      id:
+        type: string
+        readOnly: true
+        description: Internal UUID of user
+      state:
+        type: integer
+        description: 'Record state (0 for normal, -1 for deleted)'
+        readOnly: true
+        default: 0
+      type:
+        type: integer
+        description: '0 for normal user, 1 for service'
+        readOnly: true
+        default: 0
+      globalPermissionMask:
+        type: integer
+        description: 'Permission bit mask applied to all objects (for system admins, normally 0)'
+        readOnly: true
+        required: false
+      emailConfirmed:
+        type: boolean
+        description: Has e-mail address been confirmed?
+        readOnly: true
+        default: false
+        required: false
+      auth:
+        type: string
+        description: Account authentication type (for federated login)
+        default: local
+        readOnly: true
+        enum:
+          - local
+          - google
+          - github
+          - slack
+          - facebook
+          - twitter
+          - linkedin
+      authUserId:
+        type: string
+        description: Identifier for user via given authentication type (e.g. e-mail for local)
+        readOnly: true
+      displayName:
+        type: string
+        description: 'A friendly name for this user, usually full name'
+        required: false
+      email:
+        type: string
+        description: User's e-mail address (changing resets emailConfirmed)
+        required: false
+      paymentProcessorCustomerId:
+        type: string
+        description: Customer record ID on payment processor
+        readOnly: true
+        required: false
+      password:
+        type: string
+        description: 'bcrypt-hashed password (for local auth only, on change server performs bcrypt)'
+        required: false
+      permissions:
+        type: object
+        description: Global permissions (currently unused)
+        readOnly: true
+        required: false
+      config:
+        type: object
+        description: Service configuration options (unused for normal users)
+        required: false
+      tokens:
+        type: object
+        description: API authorization tokens and their time of expiration in milliseconds since the epoch (or null for no expiration)
+        required: false
+      annot:
+        type: object
+        description: Ephemeral or short-lived internal annotations/flags
+        readOnly: true
+        required: false
+      ui:
+        type: object
+        description: Object for storing arbitrary annotations for UIs (e.g. web UI)
+        required: false
+      _type:
+        type: string
+        default: User
+        readOnly: true
+        required: false
+  NetworkIpAssignmentPool:
+    properties:
+      ipRangeStart:
+        type: string
+        description: Start of IP address range (must be within an ipLocalRoute)
+        required: false
+      ipRangeEnd:
+        type: string
+        description: End of IP address range (must be within an ipLocalRoute)
+        required: false
+  NetworkRelay:
+    properties:
+      address:
+        type: string
+        description: 10-digit hex ZeroTier address of network preferred relay
+        required: false
+      phyAddress:
+        type: string
+        description: Physical address of relay in IP/port format or null to find using upstream/root
+        required: false
+  NetworkMemberConfig:
+    properties:
+      nwid:
+        type: string
+        description: 16-digit network ID
+        readOnly: true
+        required: false
+      clock:
+        type: integer
+        description: Clock on network controller microservice when member config was last retrieved
+        readOnly: true
+        required: false
+      address:
+        type: string
+        description: 10-digit ZeroTier address of member
+        readOnly: true
+        required: false
+      authorized:
+        type: boolean
+        description: 'If true, member is authorized (only meaningful on private networks!)'
+        required: false
+      activeBridge:
+        type: boolean
+        description: 'If true, this member can act as an Ethernet bridge and bridge in other hosts behind it'
+        required: false
+      identity:
+        type: string
+        description: ZeroTier identity.public of this member (if known)
+        required: false
+      ipAssignments:
+        type: array
+        items:
+          type: string
+          description: 'IP/netmask bits (e.g. ''10.0.0.1/24'' or ''dead:beef:0000:0000:0000:0000:0000:0001/88'')'
+        required: false
+      memberRevision:
+        type: integer
+        description: Current member revision
+        readOnly: true
+        required: false
+  NetworkRule:
+    properties:
+      action:
+        type: string
+        description: currently only 'accept' or 'drop'
+        required: false
+      ruleNo:
+        type: integer
+        description: integer determining rule sort order (ascending in order of ruleNo)
+        required: false
+      etherType:
+        type: integer
+        description: 'Ethernet frame type (16-bit, higher order bits ignored)'
+        required: false
+  NetworkConfig:
+    properties:
+      nwid:
+        type: string
+        description: 16-digit ZeroTier network ID
+        readOnly: true
+        required: false
+      name:
+        type: string
+        description: 'Short network name, max 255 characters'
+        required: false
+      clock:
+        type: integer
+        description: The system clock on the network controller when this network config was last updated (ms since epoch)
+        readOnly: true
+        required: false
+      rules:
+        type: array
+        items:
+          type: NetworkRule
+        required: false
+      relays:
+        type: array
+        items:
+          type: NetworkRelay
+        required: false
+      private:
+        type: boolean
+        description: 'If true (default), member access control is enabled.'
+        required: false
+      revision:
+        type: integer
+        description: Revision counter (used internally by controller)
+        readOnly: true
+        required: false
+      creationTime:
+        type: integer
+        description: Time network was created on controller microservice (not on ZeroTier Central)
+        readOnly: true
+        required: false
+      v4AssignMode:
+        type: string
+        description: '''none'' to leave IPv4 addresses alone or ''zt'' to have ZeroTier assign and manage them.'
+        required: false
+      v6AssignMode:
+        type: string
+        description: '''none'' to leave IPv6 addresses alone or ''rfc4193'' to assign using RFC4193-compliant scheme'
+        required: false
+      multicastLimit:
+        type: integer
+        description: Maximum number of recipients for a multicast or broadcast message.
+        required: false
+      ipLocalRoutes:
+        type: array
+        items:
+          type: string
+          description: IP/netmask bits e.g. '10.0.0.0/24'
+        required: false
+      ipAssignmentPools:
+        type: array
+        items:
+          type: NetworkIpAssignmentPool
+        required: false
+      controllerInstanceId:
+        type: string
+        description: A random ID representing this instance of the network controller microservice serving this network.
+        readOnly: true
+        required: false
+      authorizedMemberCount:
+        type: integer
+        description: Number of authorized members on this network.
+        readOnly: true
+        required: false
+      memberRevisionCounter:
+        type: integer
+        description: Counter used internally by the network controller microservice to assign member revisions.
+        readOnly: true
+        required: false
+  Network:
+    properties:
+      id:
+        type: string
+        description: ZeroTier network ID (16 hex digits)
+        readOnly: true
+        required: false
+      config:
+        type: NetworkConfig
+        required: false
+      annot:
+        type: object
+        description: Ephemeral or short-lived internal annotations/flags
+        readOnly: true
+        required: false
+      ui:
+        type: object
+        description: Object for storing arbitrary annotations for UIs (e.g. web UI)
+        required: false
+  NetworkMember:
+    properties:
+      networkId:
+        type: string
+        description: 16-digit network ID
+        readOnly: true
+        required: false
+      state:
+        type: integer
+        description: For internal use
+        readOnly: true
+        required: false
+      nodeId:
+        type: string
+        description: 10-digit ZeroTier address of network member
+        readOnly: true
+        required: false
+      config:
+        type: NetworkMemberConfig
+        required: false
+      annot:
+        type: object
+        description: Ephemeral or short-lived internal annotations/flags
+        readOnly: true
+        required: false
+      ui:
+        type: object
+        description: Object for storing arbitrary annotations for UIs (e.g. web UI)
+        required: false
+  SystemStatus:
+    properties:
+      online:
+        type: boolean
+        description: Always present and true if service is online
+        required: false
+      clock:
+        type: integer
+        format: int64
+        description: System clock of server in milliseconds since epoch
+        required: false
+      version:
+        type: string
+        description: ZeroTier Central server version
+        required: false
+      uptime:
+        type: integer
+        format: int64
+        description: 'Server uptime in milliseconds (service, not host)'
+        required: false
+      user:
+        description: Current user or null if not logged in
+        type: User
+        required: false
+      stripePublishableKey:
+        type: string
+        description: Stripe API publishable key for payment info entry or null if payments not enabled on this server or if not logged in
+        required: false
+      paidPlans:
+        type: object
+        description: Paid plan info for web UI or null if payment not enabled on this server
+        required: false
+      smsEnabled:
+        type: boolean
+        description: True if this server can send SMS messages
+        required: false
+      loginMethods:
+        type: object
+        description: Login methods supported by this server
+        required: false
+  Error:
+    properties:
+      id:
+        type: integer
+        description: Error code
+        required: false
+      message:
+        type: string
+        description: Human-readable error message
+        required: false
+      data:
+        type: object
+        description: Any meta-data associated with this error or empty object if none
+        required: false
