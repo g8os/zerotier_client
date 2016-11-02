@@ -18,3 +18,7 @@ An example on how to use the library. It does these things:
 - get array of networks and print the name of first network in the array
 - reverse the name of the first network above
 - get the first network above by it's ID and print it's name
+
+## generates.sh
+
+Script to generate this client library
