@@ -1,0 +1,715 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.8.0",
+        "title": "ZeroTier Central API"
+    },
+    "basePath": "/api",
+    "schemes": ["https"],
+    "host": "my.zerotier.com",
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/status": {
+            "get": {
+                "summary": "Get system version, status, and uptime",
+                "description": "This returns the current status of the system. Unlike most of the API it is avilable without authentication, though some fields are omitted in\nthis case.",
+                "responses": {
+                    "200": {
+                        "description": "System status information",
+                        "schema": {
+                            "$ref": "#/definitions/SystemStatus"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error (server is unavailable)",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/self": {
+            "get": {
+                "summary": "Get currently authenticated user (if any)",
+                "description": "",
+                "responses": {
+                    "200": {
+                        "description": "Current user",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user": {
+            "get": {
+                "summary": "List viewable or editable users (including yourself)",
+                "description": "",
+                "responses": {
+                    "200": {
+                        "description": "Array of incomplete / preview user records",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/User"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "summary": "Get a user by UUID",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "User record",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure or user not viewable",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Update user information",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }, {
+                    "name": "data",
+                    "description": "Changes to user record (unknown and read-only fields ignored)",
+                    "in": "body",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/User"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Updated user record",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure or user not viewable",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/network": {
+            "get": {
+                "summary": "Get a list of networks this user owns or can view/edit",
+                "description": "",
+                "responses": {
+                    "200": {
+                        "description": "Array of incomplete / preview Network objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Network"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/network/{id}": {
+            "get": {
+                "summary": "Get network configuration and status information",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Network config and status",
+                        "schema": {
+                            "$ref": "#/definitions/Network"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Update network configuration",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Updated network record",
+                        "schema": {
+                            "$ref": "#/definitions/Network"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure or network not viewable",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/network/{id}/member": {
+            "get": {
+                "summary": "Get a list of network members",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Array of incomplete / preview NetworkMember object",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/NetworkMember"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/network/{id}/member/{address}": {
+            "get": {
+                "summary": "Get network member settings",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }, {
+                    "$ref": "#/parameters/addressInPath"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Network member settings",
+                        "schema": {
+                            "$ref": "#/definitions/NetworkMember"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Update member settings",
+                "description": "",
+                "parameters": [{
+                    "$ref": "#/parameters/idInPath"
+                }, {
+                    "$ref": "#/parameters/addressInPath"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Updated network record",
+                        "schema": {
+                            "$ref": "#/definitions/NetworkMember"
+                        }
+                    },
+                    "403": {
+                        "description": "Authentication failure or network not viewable",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "parameters": {
+        "idInPath": {
+            "name": "id",
+            "in": "path",
+            "description": "Object identifier",
+            "required": true,
+            "type": "string"
+        },
+        "addressInPath": {
+            "name": "address",
+            "in": "path",
+            "description": "ZeroTier device address",
+            "required": true,
+            "type": "string"
+        }
+    },
+    "definitions": {
+        "SystemStatus": {
+            "properties": {
+                "online": {
+                    "type": "boolean",
+                    "description": "Always present and true if service is online"
+                },
+                "clock": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "System clock of server in milliseconds since epoch"
+                },
+                "version": {
+                    "type": "string",
+                    "description": "ZeroTier Central server version"
+                },
+                "uptime": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Server uptime in milliseconds (service, not host)"
+                },
+                "user": {
+                    "$ref": "#/definitions/User",
+                    "description": "Current user or null if not logged in"
+                },
+                "stripePublishableKey": {
+                    "type": "string",
+                    "description": "Stripe API publishable key for payment info entry or null if payments not enabled on this server or if not logged in"
+                },
+                "paidPlans": {
+                    "type": "object",
+                    "description": "Paid plan info for web UI or null if payment not enabled on this server"
+                },
+                "smsEnabled": {
+                    "type": "boolean",
+                    "description": "True if this server can send SMS messages"
+                },
+                "loginMethods": {
+                    "type": "object",
+                    "description": "Login methods supported by this server"
+                }
+            }
+        },
+        "Error": {
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "Error code"
+                },
+                "message": {
+                    "type": "string",
+                    "description": "Human-readable error message"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "Any meta-data associated with this error or empty object if none"
+                }
+            }
+        },
+        "User": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "readOnly": true,
+                    "description": "Internal UUID of user"
+                },
+                "state": {
+                    "type": "integer",
+                    "description": "Record state (0 for normal, -1 for deleted)",
+                    "readOnly": true,
+                    "default": 0
+                },
+                "type": {
+                    "type": "integer",
+                    "description": "0 for normal user, 1 for service",
+                    "readOnly": true,
+                    "default": 0
+                },
+                "globalPermissionMask": {
+                    "type": "integer",
+                    "description": "Permission bit mask applied to all objects (for system admins, normally 0)",
+                    "readOnly": true
+                },
+                "emailConfirmed": {
+                    "type": "boolean",
+                    "description": "Has e-mail address been confirmed?",
+                    "readOnly": true,
+                    "default": false
+                },
+                "auth": {
+                    "type": "string",
+                    "description": "Account authentication type (for federated login)",
+                    "default": "local",
+                    "readOnly": true,
+                    "enum": ["local", "google", "github", "slack", "facebook", "twitter", "linkedin"]
+                },
+                "authUserId": {
+                    "type": "string",
+                    "description": "Identifier for user via given authentication type (e.g. e-mail for local)",
+                    "readOnly": true
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "A friendly name for this user, usually full name"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "User's e-mail address (changing resets emailConfirmed)"
+                },
+                "paymentProcessorCustomerId": {
+                    "type": "string",
+                    "description": "Customer record ID on payment processor",
+                    "readOnly": true
+                },
+                "password": {
+                    "type": "string",
+                    "description": "bcrypt-hashed password (for local auth only, on change server performs bcrypt)"
+                },
+                "permissions": {
+                    "type": "object",
+                    "description": "Global permissions (currently unused)",
+                    "readOnly": true
+                },
+                "config": {
+                    "type": "object",
+                    "description": "Service configuration options (unused for normal users)"
+                },
+                "tokens": {
+                    "type": "object",
+                    "description": "API authorization tokens and their time of expiration in milliseconds since the epoch (or null for no expiration)"
+                },
+                "annot": {
+                    "type": "object",
+                    "description": "Ephemeral or short-lived internal annotations/flags",
+                    "readOnly": true
+                },
+                "ui": {
+                    "type": "object",
+                    "description": "Object for storing arbitrary annotations for UIs (e.g. web UI)"
+                },
+                "_type": {
+                    "type": "string",
+                    "default": "User",
+                    "readOnly": true
+                }
+            },
+            "required": ["id", "state", "type", "auth", "authUserId"]
+        },
+        "Network": {
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "ZeroTier network ID (16 hex digits)",
+                    "readOnly": true
+                },
+                "config": {
+                    "$ref": "#/definitions/NetworkConfig"
+                },
+                "annot": {
+                    "type": "object",
+                    "description": "Ephemeral or short-lived internal annotations/flags",
+                    "readOnly": true
+                },
+                "ui": {
+                    "type": "object",
+                    "description": "Object for storing arbitrary annotations for UIs (e.g. web UI)"
+                }
+            }
+        },
+        "NetworkConfig": {
+            "properties": {
+                "nwid": {
+                    "type": "string",
+                    "description": "16-digit ZeroTier network ID",
+                    "readOnly": true
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Short network name, max 255 characters"
+                },
+                "clock": {
+                    "type": "integer",
+                    "description": "The system clock on the network controller when this network config was last updated (ms since epoch)",
+                    "readOnly": true
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NetworkRule"
+                    }
+                },
+                "relays": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NetworkRelay"
+                    }
+                },
+                "private": {
+                    "type": "boolean",
+                    "description": "If true (default), member access control is enabled."
+                },
+                "revision": {
+                    "type": "integer",
+                    "description": "Revision counter (used internally by controller)",
+                    "readOnly": true
+                },
+                "creationTime": {
+                    "type": "integer",
+                    "description": "Time network was created on controller microservice (not on ZeroTier Central)",
+                    "readOnly": true
+                },
+                "v4AssignMode": {
+                    "type": "string",
+                    "description": "'none' to leave IPv4 addresses alone or 'zt' to have ZeroTier assign and manage them."
+                },
+                "v6AssignMode": {
+                    "type": "string",
+                    "description": "'none' to leave IPv6 addresses alone or 'rfc4193' to assign using RFC4193-compliant scheme"
+                },
+                "multicastLimit": {
+                    "type": "integer",
+                    "description": "Maximum number of recipients for a multicast or broadcast message."
+                },
+                "ipLocalRoutes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "IP/netmask bits e.g. '10.0.0.0/24'"
+                    }
+                },
+                "ipAssignmentPools": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NetworkIpAssignmentPool"
+                    }
+                },
+                "controllerInstanceId": {
+                    "type": "string",
+                    "description": "A random ID representing this instance of the network controller microservice serving this network.",
+                    "readOnly": true
+                },
+                "authorizedMemberCount": {
+                    "type": "integer",
+                    "description": "Number of authorized members on this network.",
+                    "readOnly": true
+                },
+                "memberRevisionCounter": {
+                    "type": "integer",
+                    "description": "Counter used internally by the network controller microservice to assign member revisions.",
+                    "readOnly": true
+                }
+            }
+        },
+        "NetworkRule": {
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "description": "currently only 'accept' or 'drop'"
+                },
+                "ruleNo": {
+                    "type": "integer",
+                    "description": "integer determining rule sort order (ascending in order of ruleNo)"
+                },
+                "etherType": {
+                    "type": "integer",
+                    "description": "Ethernet frame type (16-bit, higher order bits ignored)"
+                }
+            }
+        },
+        "NetworkRelay": {
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "description": "10-digit hex ZeroTier address of network preferred relay"
+                },
+                "phyAddress": {
+                    "type": "string",
+                    "description": "Physical address of relay in IP/port format or null to find using upstream/root"
+                }
+            }
+        },
+        "NetworkIpAssignmentPool": {
+            "properties": {
+                "ipRangeStart": {
+                    "type": "string",
+                    "description": "Start of IP address range (must be within an ipLocalRoute)"
+                },
+                "ipRangeEnd": {
+                    "type": "string",
+                    "description": "End of IP address range (must be within an ipLocalRoute)"
+                }
+            }
+        },
+        "NetworkMember": {
+            "properties": {
+                "networkId": {
+                    "type": "string",
+                    "description": "16-digit network ID",
+                    "readOnly": true
+                },
+                "state": {
+                    "type": "integer",
+                    "description": "For internal use",
+                    "readOnly": true
+                },
+                "nodeId": {
+                    "type": "string",
+                    "description": "10-digit ZeroTier address of network member",
+                    "readOnly": true
+                },
+                "config": {
+                    "$ref": "#/definitions/NetworkMemberConfig"
+                },
+                "annot": {
+                    "type": "object",
+                    "description": "Ephemeral or short-lived internal annotations/flags",
+                    "readOnly": true
+                },
+                "ui": {
+                    "type": "object",
+                    "description": "Object for storing arbitrary annotations for UIs (e.g. web UI)"
+                }
+            }
+        },
+        "NetworkMemberConfig": {
+            "properties": {
+                "nwid": {
+                    "type": "string",
+                    "description": "16-digit network ID",
+                    "readOnly": true
+                },
+                "clock": {
+                    "type": "integer",
+                    "description": "Clock on network controller microservice when member config was last retrieved",
+                    "readOnly": true
+                },
+                "address": {
+                    "type": "string",
+                    "description": "10-digit ZeroTier address of member",
+                    "readOnly": true
+                },
+                "authorized": {
+                    "type": "boolean",
+                    "description": "If true, member is authorized (only meaningful on private networks!)"
+                },
+                "activeBridge": {
+                    "type": "boolean",
+                    "description": "If true, this member can act as an Ethernet bridge and bridge in other hosts behind it"
+                },
+                "identity": {
+                    "type": "string",
+                    "description": "ZeroTier identity.public of this member (if known)"
+                },
+                "ipAssignments": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "IP/netmask bits (e.g. '10.0.0.1/24' or 'dead:beef:0000:0000:0000:0000:0000:0001/88')"
+                    }
+                },
+                "memberRevision": {
+                    "type": "integer",
+                    "description": "Current member revision",
+                    "readOnly": true
+                }
+            }
+        }
+    }
+}
