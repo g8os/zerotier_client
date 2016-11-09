@@ -28,7 +28,7 @@ class NetworkService:
         It is method for POST /network/{id}
         """
         uri = self.client.base_url + "/network/"+id
-        return self.client.session.post(uri, data, headers=headers, params=query_params)
+        return self.client.post(uri, data, headers=headers, params=query_params)
 
 
     def GET_network_id_member(self, id, headers=None, query_params=None):
@@ -55,4 +55,4 @@ class NetworkService:
         It is method for POST /network/{id}/member/{address}
         """
         uri = self.client.base_url + "/network/"+id+"/member/"+address
-        return self.client.session.post(uri, data, headers=headers, params=query_params)
+        return self.client.post(uri, data, headers=headers, params=query_params)

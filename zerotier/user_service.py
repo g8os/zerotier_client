@@ -28,4 +28,4 @@ class UserService:
         It is method for POST /user/{id}
         """
         uri = self.client.base_url + "/user/"+id
-        return self.client.session.post(uri, data, headers=headers, params=query_params)
+        return self.client.post(uri, data, headers=headers, params=query_params)
