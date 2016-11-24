@@ -6,7 +6,7 @@ class SelfService:
 
     def GET_self(self, headers=None, query_params=None):
         """
-        Get currently authenticated user (if any). Get currently authenticated user (if any)
+        Get currently authenticated user (if any).
         It is method for GET /self
         """
         uri = self.client.base_url + "/self"
