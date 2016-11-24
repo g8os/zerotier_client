@@ -127,6 +127,9 @@ protocols:
   post:
     displayName: POST_network
     description: Create a new network
+    body:
+      application/json:
+        type: Network
     responses:
         '200':
           body:
