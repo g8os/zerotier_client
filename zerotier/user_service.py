@@ -6,7 +6,7 @@ class UserService:
 
     def GET_user(self, headers=None, query_params=None):
         """
-        List viewable or editable users (including yourself). List viewable or editable users (including yourself)
+        List viewable or editable users (including yourself).
         It is method for GET /user
         """
         uri = self.client.base_url + "/user"
@@ -24,7 +24,7 @@ class UserService:
 
     def POST_user_id(self, data, id, headers=None, query_params=None):
         """
-        Update user information. Update user information
+        Update user information.
         It is method for POST /user/{id}
         """
         uri = self.client.base_url + "/user/"+id

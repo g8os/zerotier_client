@@ -16,7 +16,7 @@ protocols:
         displayName: Object identifier
     post:
       displayName: POST_network-id
-      description: Update network configuration. Update network configuration
+      description: Update network configuration
       body: {}
       responses:
         '200':
@@ -29,6 +29,17 @@ protocols:
             application/json:
               type: Error
           description: Authentication failure or network not viewable
+    delete:
+      displayName: DELETE_network-id
+      description: Delete network
+      body: {}
+      responses:
+        '200':
+          body:
+            application/json:
+               type: NetworkDeleteStatus
+          description: Network deleted
+
     /member:
       displayName: member
       '/{address}':
@@ -40,7 +51,7 @@ protocols:
             displayName: ZeroTier device address
         get:
           displayName: GET_network-id-member-address
-          description: Get network member settings. Get network member settings
+          description: Get network member settings
           responses:
             '200':
               body:
@@ -54,7 +65,7 @@ protocols:
               description: Authentication failure
         post:
           displayName: POST_network-id-member-address
-          description: Update member settings. Update member settings
+          description: Update member settings
           body: {}
           responses:
             '200':
@@ -69,7 +80,7 @@ protocols:
               description: Authentication failure or network not viewable
       get:
         displayName: GET_network-id-member
-        description: Get a list of network members. Get a list of network members
+        description: Get a list of network members
         responses:
           '200':
             body:
@@ -85,7 +96,7 @@ protocols:
             description: Authentication failure
     get:
       displayName: GET_network-id
-      description: Get network configuration and status information. Get network configuration and status information
+      description: Get network configuration and status information
       responses:
         '200':
           body:
@@ -99,7 +110,7 @@ protocols:
           description: Authentication failure
   get:
     displayName: GET_network
-    description: Get a list of networks this user owns or can view/edit. Get a list of networks this user owns or can view/edit
+    description: Get a list of networks this user owns or can view/edit
     responses:
       '200':
         body:
@@ -113,11 +124,28 @@ protocols:
           application/json:
             type: Error
         description: Authentication failure
+  post:
+    displayName: POST_network
+    description: Create a new network
+    body:
+      application/json:
+        type: Network
+    responses:
+        '200':
+          body:
+            application/json:
+              type: Network
+          description: Network config and status
+        '403':
+          body:
+            application/json:
+               type: Error
+          description: Authentication failure
 /self:
   displayName: self
   get:
     displayName: GET_self
-    description: Get currently authenticated user (if any). Get currently authenticated user (if any)
+    description: Get currently authenticated user (if any).
     responses:
       '200':
         body:
@@ -146,7 +174,7 @@ protocols:
   displayName: user
   get:
     displayName: GET_user
-    description: List viewable or editable users (including yourself). List viewable or editable users (including yourself)
+    description: List viewable or editable users (including yourself).
     responses:
       '200':
         body:
@@ -169,7 +197,7 @@ protocols:
         displayName: Object identifier
     post:
       displayName: POST_user-id
-      description: Update user information. Update user information
+      description: Update user information.
       body:
         application/json:
           type: User
@@ -487,6 +515,18 @@ types:
         type: object
         description: Object for storing arbitrary annotations for UIs (e.g. web UI)
         required: false
+  NetworkDeleteStatus:
+    properties:
+      id:
+        type: string
+        description: ZeroTier network ID (16 hex digits)
+        readOnly: true
+        required: true
+      deleted:
+         type: boolean
+         description: True if network has been deleted false otherwise
+         readOnly: true
+         required: true
   SystemStatus:
     properties:
       online:
