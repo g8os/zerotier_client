@@ -28,7 +28,7 @@
                 }
             ],
             "get": {
-                "operationId": "GET_network-id-member",
+                "operationId": "listMembers",
                 "summary": "Get a list of network members",
                 "tags": [
                     "Network"
@@ -70,7 +70,7 @@
                 }
             ],
             "get": {
-                "operationId": "GET_network-id",
+                "operationId": "getNetwork",
                 "summary": "Get network configuration and status information",
                 "tags": [
                     "Network"
@@ -98,7 +98,7 @@
                 }
             },
             "post": {
-                "operationId": "POST_network-id",
+                "operationId": "updateNetwork",
                 "summary": "Update network configuration",
                 "tags": [
                     "Network"
@@ -144,7 +144,7 @@
                 }
             ],
             "get": {
-                "operationId": "GET_network-id-member-address",
+                "operationId": "getMember",
                 "summary": "Get network member settings",
                 "tags": [
                     "Network"
@@ -172,7 +172,7 @@
                 }
             },
             "post": {
-                "operationId": "POST_network-id-member-address",
+                "operationId": "updateMember",
                 "summary": "Update member settings",
                 "tags": [
                     "Network"
@@ -202,7 +202,7 @@
         },
         "/network": {
             "get": {
-                "operationId": "GET_network",
+                "operationId": "listNetworks",
                 "summary": "Get a list of networks this user owns or can view/edit",
                 "tags": [
                     "Network"
@@ -235,7 +235,7 @@
         },
         "/self": {
             "get": {
-                "operationId": "GET_self",
+                "operationId": "getAuthenticatedUser",
                 "summary": "Get currently authenticated user (if any)",
                 "tags": [
                     "Self"
@@ -265,7 +265,7 @@
         },
         "/status": {
             "get": {
-                "operationId": "GET_status",
+                "operationId": "getStatus",
                 "summary": "Get system version, status, and uptime",
                 "tags": [
                     "Status"
@@ -298,7 +298,7 @@
                 }
             ],
             "get": {
-                "operationId": "GET_user-id",
+                "operationId": "getUser",
                 "summary": "Get a user by UUID",
                 "tags": [
                     "User"
@@ -326,7 +326,7 @@
                 }
             },
             "post": {
-                "operationId": "POST_user-id",
+                "operationId": "updateUser",
                 "summary": "Update user information",
                 "tags": [
                     "User"
@@ -365,7 +365,7 @@
         },
         "/user": {
             "get": {
-                "operationId": "GET_user",
+                "operationId": "listUsers",
                 "summary": "List viewable or editable users (including yourself)",
                 "tags": [
                     "User"

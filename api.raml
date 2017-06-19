@@ -15,7 +15,7 @@ protocols:
         type: string
         displayName: Object identifier
     post:
-      displayName: POST_network-id
+      displayName: updateNetwork
       description: Update network configuration
       body: {}
       responses:
@@ -30,7 +30,7 @@ protocols:
               type: Error
           description: Authentication failure or network not viewable
     delete:
-      displayName: DELETE_network-id
+      displayName: deleteNetwork
       description: Delete network
       body: {}
       responses:
@@ -50,7 +50,7 @@ protocols:
             type: string
             displayName: ZeroTier device address
         get:
-          displayName: GET_network-id-member-address
+          displayName: getMember
           description: Get network member settings
           responses:
             '200':
@@ -64,7 +64,7 @@ protocols:
                   type: Error
               description: Authentication failure
         post:
-          displayName: POST_network-id-member-address
+          displayName: updateMember
           description: Update member settings
           body: {}
           responses:
@@ -78,16 +78,27 @@ protocols:
                 application/json:
                   type: Error
               description: Authentication failure or network not viewable
+        delete:
+          displayName: deleteMember
+          description: Delete member from network
+          responses:
+            '200':
+              body:
+                application/json:
+              description: Deleted member from network
+            '403':
+              body:
+                application/json:
+                  type: Error
+              description: Authentication failure or network not viewable
       get:
-        displayName: GET_network-id-member
+        displayName: listMembers
         description: Get a list of network members
         responses:
           '200':
             body:
               application/json:
-                type: array
-                items:
-                  type: NetworkMember
+                type: NetworkMember[]
             description: Array of incomplete / preview NetworkMember object
           '403':
             body:
@@ -95,7 +106,7 @@ protocols:
                 type: Error
             description: Authentication failure
     get:
-      displayName: GET_network-id
+      displayName: getNetwork
       description: Get network configuration and status information
       responses:
         '200':
@@ -109,15 +120,13 @@ protocols:
               type: Error
           description: Authentication failure
   get:
-    displayName: GET_network
+    displayName: listNetworks
     description: Get a list of networks this user owns or can view/edit
     responses:
       '200':
         body:
           application/json:
-            type: array
-            items:
-              type: Network
+            type: Network[]
         description: Array of incomplete / preview Network objects
       '403':
         body:
@@ -125,7 +134,7 @@ protocols:
             type: Error
         description: Authentication failure
   post:
-    displayName: POST_network
+    displayName: createNetwork
     description: Create a new network
     body:
       application/json:
@@ -144,7 +153,7 @@ protocols:
 /self:
   displayName: self
   get:
-    displayName: GET_self
+    displayName: getAuthenticatedUser
     description: Get currently authenticated user (if any).
     responses:
       '200':
@@ -160,7 +169,7 @@ protocols:
 /status:
   displayName: status
   get:
-    displayName: GET_status
+    displayName: getStatus
     description: |-
       Get system version, status, and uptime. This returns the current status of the system. Unlike most of the API it is avilable without authentication, though some fields are omitted in
       this case.
@@ -173,15 +182,13 @@ protocols:
 /user:
   displayName: user
   get:
-    displayName: GET_user
+    displayName: listUsers
     description: List viewable or editable users (including yourself).
     responses:
       '200':
         body:
           application/json:
-            type: array
-            items:
-              type: User
+            type: User[]
         description: Array of incomplete / preview user records
       '403':
         body:
@@ -196,7 +203,7 @@ protocols:
         type: string
         displayName: Object identifier
     post:
-      displayName: POST_user-id
+      displayName: updateUser
       description: Update user information.
       body:
         application/json:
@@ -213,7 +220,7 @@ protocols:
               type: Error
           description: Authentication failure or user not viewable
     get:
-      displayName: GET_user-id
+      displayName: getUser
       description: Get a user by UUID. Get a user by UUID
       responses:
         '200':
@@ -365,10 +372,8 @@ types:
         description: ZeroTier identity.public of this member (if known)
         required: false
       ipAssignments:
-        type: array
-        items:
-          type: string
-          description: 'IP/netmask bits (e.g. ''10.0.0.1/24'' or ''dead:beef:0000:0000:0000:0000:0000:0001/88'')'
+        type: string[]
+        description: 'IP/netmask bits (e.g. ''10.0.0.1/24'' or ''dead:beef:0000:0000:0000:0000:0000:0001/88'')'
         required: false
       memberRevision:
         type: integer
@@ -406,14 +411,10 @@ types:
         readOnly: true
         required: false
       rules:
-        type: array
-        items:
-          type: NetworkRule
+        type: NetworkRule[]
         required: false
       relays:
-        type: array
-        items:
-          type: NetworkRelay
+        type: NetworkRelay[]
         required: false
       private:
         type: boolean
@@ -442,15 +443,11 @@ types:
         description: Maximum number of recipients for a multicast or broadcast message.
         required: false
       ipLocalRoutes:
-        type: array
-        items:
-          type: string
-          description: IP/netmask bits e.g. '10.0.0.0/24'
+        type: string[]
+        description: IP/netmask bits e.g. '10.0.0.0/24'
         required: false
       ipAssignmentPools:
-        type: array
-        items:
-          type: NetworkIpAssignmentPool
+        type: NetworkIpAssignmentPool[]
         required: false
       controllerInstanceId:
         type: string
