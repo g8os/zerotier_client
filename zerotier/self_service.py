@@ -2,9 +2,7 @@ class SelfService:
     def __init__(self, client):
         self.client = client
 
-
-
-    def GET_self(self, headers=None, query_params=None):
+    def getAuthenticatedUser(self, headers=None, query_params=None):
         """
         Get currently authenticated user (if any).
         It is method for GET /self
