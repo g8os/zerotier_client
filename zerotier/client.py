@@ -1,42 +1,73 @@
 import requests
 
-from .network_service import  NetworkService 
-from .self_service import  SelfService 
-from .status_service import  StatusService 
-from .user_service import  UserService 
-
-BASE_URI = "https://my.zerotier.com/api"
+from .network_service import NetworkService 
+from .self_service import SelfService 
+from .status_service import StatusService 
+from .user_service import UserService 
 
 
 class Client:
-    def __init__(self):
-        self.base_url = BASE_URI
+    def __init__(self, base_uri="https://my.zerotier.com/api"):
+        self.base_url = base_uri
         self.session = requests.Session()
-        self.session.headers.update({"Content-Type": "application/json"})
         
         self.network = NetworkService(self)
         self.self = SelfService(self)
         self.status = StatusService(self)
         self.user = UserService(self)
-    
+
+    def is_goraml_class(self, data):
+        # check if a data is go-raml generated class
+        # we currently only check the existence
+        # of as_json method
+        op = getattr(data, "as_json", None)
+        if callable(op):
+            return True
+        return False
+
     def set_auth_header(self, val):
         ''' set authorization header value'''
-        self.session.headers.update({"Authorization":val})
+        self.session.headers.update({"Authorization": val})
 
-    def post(self, uri, data, headers, params):
-        if type(data) is str:
-            return self.session.post(uri, data=data, headers=headers, params=params)
-        else:
-            return self.session.post(uri, json=data, headers=headers, params=params)
+    def _get_headers(self, headers, content_type):
+        if content_type:
+            contentheader = {"Content-Type": content_type}
+            if headers is None:
+                headers = contentheader
+            else:
+                headers.update(contentheader)
+        return headers
 
-    def put(self, uri, data, headers, params):
-        if type(data) is str:
-            return self.session.put(uri, data=data, headers=headers, params=params)
-        else:
-            self.session.put(uri, json=data, headers=headers, params=params)
+    def _handle_data(self, uri, data, headers, params, content_type, method):
+        headers = self._get_headers(headers, content_type)
+        if self.is_goraml_class(data):
+            data = data.as_json()
 
-    def patch(self, uri, data, headers, params):
-        if type(data) is str:
-            return self.session.patch(uri, data=data, headers=headers, params=params)
+        if content_type == "multipart/form-data":
+            # when content type is multipart/formdata remove the content-type header
+            # as requests will set this itself with correct boundary
+            headers.pop('Content-Type')
+            res = method(uri, files=data, headers=headers, params=params)
+        elif data is None:
+            res = method(uri, headers=headers, params=params)
+        elif type(data) is str:
+            res = method(uri, data=data, headers=headers, params=params)
         else:
-            return self.session.patch(uri, json=data, headers=headers, params=params)
+            res = method(uri, json=data, headers=headers, params=params)
+        res.raise_for_status()
+        return res
+
+    def post(self, uri, data, headers, params, content_type):
+        return self._handle_data(uri, data, headers, params, content_type, self.session.post)
+
+    def put(self, uri, data, headers, params, content_type):
+        return self._handle_data(uri, data, headers, params, content_type, self.session.put)
+
+    def patch(self, uri, data, headers, params, content_type):
+        return self._handle_data(uri, data, headers, params, content_type, self.session.patch)
+
+    def get(self, uri, data, headers, params, content_type):
+        return self._handle_data(uri, data, headers, params, content_type, self.session.get)
+
+    def delete(self, uri, data, headers, params, content_type):
+        return self._handle_data(uri, data, headers, params, content_type, self.session.delete)
