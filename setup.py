@@ -11,10 +11,10 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='zerotier',
-    version='1.1.0',
+    version='1.1.1',
     description='Zerotier API client',
     long_description=long_description,
-    url='https://github.com/g8os/grid',
+    url='https://github.com/zero-os/zerotier_client',
     author='GIG',
     author_email='info@gig.tech',
     license='Apache 2.0',
