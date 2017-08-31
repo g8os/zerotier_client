@@ -17,7 +17,9 @@ protocols:
     post:
       displayName: updateNetwork
       description: Update network configuration
-      body: {}
+      body:
+        application/json:
+          type: Network
       responses:
         '200':
           body:
@@ -238,34 +240,34 @@ types:
     properties:
       id:
         type: string
-        readOnly: true
+        
         description: Internal UUID of user
       state:
         type: integer
         description: 'Record state (0 for normal, -1 for deleted)'
-        readOnly: true
+        
         default: 0
       type:
         type: integer
         description: '0 for normal user, 1 for service'
-        readOnly: true
+        
         default: 0
       globalPermissionMask:
         type: integer
         description: 'Permission bit mask applied to all objects (for system admins, normally 0)'
-        readOnly: true
+        
         required: false
       emailConfirmed:
         type: boolean
         description: Has e-mail address been confirmed?
-        readOnly: true
+        
         default: false
         required: false
       auth:
         type: string
         description: Account authentication type (for federated login)
         default: local
-        readOnly: true
+        
         enum:
           - local
           - google
@@ -277,7 +279,7 @@ types:
       authUserId:
         type: string
         description: Identifier for user via given authentication type (e.g. e-mail for local)
-        readOnly: true
+        
       displayName:
         type: string
         description: 'A friendly name for this user, usually full name'
@@ -289,7 +291,7 @@ types:
       paymentProcessorCustomerId:
         type: string
         description: Customer record ID on payment processor
-        readOnly: true
+        
         required: false
       password:
         type: string
@@ -298,7 +300,7 @@ types:
       permissions:
         type: object
         description: Global permissions (currently unused)
-        readOnly: true
+        
         required: false
       config:
         type: object
@@ -311,7 +313,7 @@ types:
       annot:
         type: object
         description: Ephemeral or short-lived internal annotations/flags
-        readOnly: true
+        
         required: false
       ui:
         type: object
@@ -320,7 +322,7 @@ types:
       _type:
         type: string
         default: User
-        readOnly: true
+        
         required: false
   NetworkIpAssignmentPool:
     properties:
@@ -347,17 +349,17 @@ types:
       nwid:
         type: string
         description: 16-digit network ID
-        readOnly: true
+        
         required: false
       clock:
         type: integer
         description: Clock on network controller microservice when member config was last retrieved
-        readOnly: true
+        
         required: false
       address:
         type: string
         description: 10-digit ZeroTier address of member
-        readOnly: true
+        
         required: false
       authorized:
         type: boolean
@@ -378,7 +380,7 @@ types:
       memberRevision:
         type: integer
         description: Current member revision
-        readOnly: true
+        
         required: false
   NetworkRule:
     properties:
@@ -399,7 +401,7 @@ types:
       nwid:
         type: string
         description: 16-digit ZeroTier network ID
-        readOnly: true
+        
         required: false
       name:
         type: string
@@ -408,7 +410,7 @@ types:
       clock:
         type: integer
         description: The system clock on the network controller when this network config was last updated (ms since epoch)
-        readOnly: true
+        
         required: false
       rules:
         type: NetworkRule[]
@@ -423,12 +425,12 @@ types:
       revision:
         type: integer
         description: Revision counter (used internally by controller)
-        readOnly: true
+        
         required: false
       creationTime:
         type: integer
         description: Time network was created on controller microservice (not on ZeroTier Central)
-        readOnly: true
+        
         required: false
       v4AssignMode:
         type: string
@@ -452,24 +454,24 @@ types:
       controllerInstanceId:
         type: string
         description: A random ID representing this instance of the network controller microservice serving this network.
-        readOnly: true
+        
         required: false
       authorizedMemberCount:
         type: integer
         description: Number of authorized members on this network.
-        readOnly: true
+        
         required: false
       memberRevisionCounter:
         type: integer
         description: Counter used internally by the network controller microservice to assign member revisions.
-        readOnly: true
+        
         required: false
   Network:
     properties:
       id:
         type: string
         description: ZeroTier network ID (16 hex digits)
-        readOnly: true
+        
         required: false
       config:
         type: NetworkConfig
@@ -477,7 +479,7 @@ types:
       annot:
         type: object
         description: Ephemeral or short-lived internal annotations/flags
-        readOnly: true
+        
         required: false
       ui:
         type: object
@@ -488,17 +490,17 @@ types:
       networkId:
         type: string
         description: 16-digit network ID
-        readOnly: true
+        
         required: false
       state:
         type: integer
         description: For internal use
-        readOnly: true
+        
         required: false
       nodeId:
         type: string
         description: 10-digit ZeroTier address of network member
-        readOnly: true
+        
         required: false
       config:
         type: NetworkMemberConfig
@@ -506,7 +508,7 @@ types:
       annot:
         type: object
         description: Ephemeral or short-lived internal annotations/flags
-        readOnly: true
+        
         required: false
       ui:
         type: object
@@ -517,12 +519,12 @@ types:
       id:
         type: string
         description: ZeroTier network ID (16 hex digits)
-        readOnly: true
+        
         required: true
       deleted:
          type: boolean
          description: True if network has been deleted false otherwise
-         readOnly: true
+         
          required: true
   SystemStatus:
     properties:
