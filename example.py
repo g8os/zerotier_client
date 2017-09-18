@@ -13,7 +13,7 @@ resp = client.status.getStatus()
 print("NETWORK STATUS \n", resp.text)
 
 # print name of first network
-networks = client.network.getNetwork().json()
+networks = client.network.listNetworks().json()
 net1 = networks[0]
 
 print("network name = ", net1['config']['name'])
