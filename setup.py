@@ -8,7 +8,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='zerotier',
-    version='1.1.1',
+    version='1.1.2',
     description='Zerotier API client',
     url='https://github.com/zero-os/zerotier_client',
     author='GIG',

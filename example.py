@@ -1,28 +1,35 @@
-from zerotier import client
+from zerotier import client as ztclient
 import json
 
 
-token = 'xs9kKSrhHHqcgCqymjAxj9e69tktPDbJ'  # fill it with your zerotier token
+def main():
+    token = 'xs9kKSrhHHqcgCqymjAxj9e69tktPDbJ'  # fill it with your zerotier token
 
-# create client and set the authentication header
-client = client.Client()
-client.set_auth_header("Bearer " + token)
+    # create client and set the authentication header
+    client = ztclient.Client()
+    client.set_auth_header("Bearer " + token)
 
-# print network status
-resp = client.status.getStatus()
-print("NETWORK STATUS \n", resp.text)
+    # print network status
+    resp = client.status.getStatus()
+    print("NETWORK STATUS \n", resp.text)
 
-# print name of first network
-networks = client.network.listNetworks().json()
-net1 = networks[0]
+    # print name of first network
+    networks = client.network.listNetworks().json()
+    if len(networks) <= 0:
+        return
 
-print("network name = ", net1['config']['name'])
+    net1 = networks[0]
 
-# modify network name
-net1['config']['name'] = net1['config']['name'][::-1]  # reverse the network name
+    print("network name = ", net1['config']['name'])
 
-print(client.network.updateNetwork(net1, net1['id']))
+    # modify network name
+    net1['config']['name'] = net1['config']['name'][::-1]  # reverse the network name
 
-# get the modified network
-new_net = client.network.getNetwork(net1['id']).json()
-print("new network name=", new_net['config']['name'])
+    print(client.network.updateNetwork(net1, net1['id']))
+
+    # get the modified network
+    new_net = client.network.getNetwork(net1['id']).json()
+    print("new network name=", new_net['config']['name'])
+
+if __name__ == "__main__":
+    main()
